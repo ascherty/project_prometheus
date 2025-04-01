@@ -2,6 +2,8 @@ package com.ascherty.app.config;
 
 import com.ascherty.app.utils.JwtFilter;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.filters.RateLimitFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Spring security configuration.
@@ -58,6 +62,17 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // Limiting the frequency of login requests
+    @Bean
+    public FilterRegistrationBean<RateLimitFilter> rateLimitFilter() {
+        FilterRegistrationBean<RateLimitFilter> registrationBean = new FilterRegistrationBean<>();
+        RateLimitFilter rateLimitFilter = new RateLimitFilter();
+        rateLimitFilter.setBucketDuration(1);
+        rateLimitFilter.setBucketRequests(5);
+        registrationBean.setFilter(rateLimitFilter);
+        registrationBean.addUrlPatterns("/api/auth/login");
+        return registrationBean;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

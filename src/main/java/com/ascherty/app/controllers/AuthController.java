@@ -27,4 +27,11 @@ public class AuthController {
     public ResponseEntity<String> login(@RequestBody UserLoginDTO userLoginDTO) {
         return ResponseEntity.ok(authService.login(userLoginDTO));
     }
+
+//    response.addCookie(ResponseCookie.from("jwt", token)
+//            .httpOnly(true)
+//    .secure(true) // Только HTTPS
+//    .sameSite("Strict") // Запрещаем отправку с чужих сайтов
+//    .path("/")
+//    .build());
 }
